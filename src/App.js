@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useReducer, useState, useRef, useMemo, useCallback } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
 import Counter from './Counter';
@@ -48,8 +48,20 @@ function reducer(state, action) {
     case 'CREATE_USER':
       return {
         inputs: initialState.inputs,    // 다시 공백으로 만듬
-        users: state.users.concat(action.user); // 배열 추가
-      }
+        users: state.users.concat(action.user) // 배열 추가
+      };
+    case 'TOGGLE_USER':
+      return {
+        ...state,
+        users: state.users.map(user => 
+          user.id === action.id ? {...user, active: !user.active} : user
+        ) 
+      };
+    case 'REMOVE_USER':
+      return {
+        ...state,
+        users: state.users.filter(user => user.id !== action.id)
+      };
     default:
       return state;
   }
@@ -57,11 +69,13 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const nextId = useRef(4);
+
   const { users } = state;
   const { username, email } = state.inputs; 
 
   const onChange = useCallback(e => {
-    const { value, name } = e.target;
+    const { name, value } = e.target;
     dispatch({
       type: 'CHANGE_INPUT',
       name,
@@ -72,24 +86,44 @@ function App() {
   const onCreate = useCallback(() => {
     dispatch({
       type: 'CREATE_USER',
-      id: nextId.curret,
-      username,
-      email
+      user: {
+        id: nextId.current,
+        username,
+        email
+      }
     });
     nextId.current += 1;
   }, [username, email]);
 
+  const onToggle = useCallback(id => {
+    dispatch({
+      type: 'TOGGLE_USER',
+      id
+    });
+  }, []);
+
+  const onRemove = useCallback(id => {
+    dispatch({
+      type: 'REMOVE_USER',
+      id
+    });
+  }, []);
+
+  const count = useMemo(() => countActiveUsers(users), [users]);
   return (
       <>
         <CreateUser 
           username={username}
           email={email}
-          onChange={onchange}
+          onChange={onChange}
+          onCreate={onCreate}
         />
         <UserList 
           users={users}
+          onToggle={onToggle}
+          onRemove={onRemove}
         />
-        <div>활성사용자 수: 0</div>
+        <div>활성사용자 수: {count}</div>
       </>
   );
 }
