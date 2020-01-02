@@ -4,10 +4,10 @@ function Counter() {
     const [number, setNumber] = useState(0);
 
     const onIncrease = () => {  // 화살표 함수
-        setNumber(number + 1);
+        setNumber(prevNumber => prevNumber + 1);
     }
     const onDecrease = () => {
-        setNumber(number - 1);
+        setNumber(prevNumber => prevNumber - 1);
     }
     return (
         <div>
