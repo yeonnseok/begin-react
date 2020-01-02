@@ -16,21 +16,24 @@ function App() {
       [name]: value
     });
   };
-  const [ users, setUsers ] = useState([ //[상태, 세터] = useState(초기값)
+  const [ users, setUsers ] = useState([  //[상태, 세터] = useState(초기값)
     {
       id: 1,
       username: 'velopert',
-      email: 'public.velopert@gmail.com'
+      email: 'public.velopert@gmail.com',
+      active: true
     },
     {
       id: 2,
       username: 'tester',
-      email: 'tester@example.com'
+      email: 'tester@example.com',
+      active: false
     },
     {
       id: 3,
       username: 'liz',
-      email: 'liz@example.com'
+      email: 'liz@example.com',
+      active: false
     }
   ]);
 
@@ -55,6 +58,14 @@ function App() {
     setUsers(users.filter(user => user.id !== id));
   };
 
+  const onToggle = id => {
+    setUsers(
+      users.map(user => 
+        user.id === id ? {...user, active: !user.active } : user
+      )
+    );
+  };
+
   return (
       <>
         <CreateUser 
@@ -63,7 +74,7 @@ function App() {
           onChange={onChange}
           onCreate={onCreate}
         />
-        <UserList users={users} onRemove={onRemove}/>
+        <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
       </>
   );
 }
