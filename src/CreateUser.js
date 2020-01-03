@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useContext } from 'react';
 import useInputs from './hooks/useInputs';
 import { UserDispatch } from './App';
 
@@ -23,7 +23,7 @@ function CreateUser() {
         reset();
         nextId.current += 1;
     };
-     
+
     return (
         <div>
             <input

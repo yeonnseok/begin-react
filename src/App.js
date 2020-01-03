@@ -1,7 +1,6 @@
-import React, { useReducer, useRef, useMemo, useCallback } from 'react';
+import React, { useReducer, useMemo } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
-import useInputs from './hooks/useInputs';
 
 function countActiveUsers(users) {
   console.log("활성 사용자 수를 세는 중....");
@@ -73,7 +72,7 @@ function App() {
         <CreateUser />
         <UserList users={users} />
         <div>활성사용자 수: {count}</div>
-      </UserDipatch.Provider>
+      </UserDispatch.Provider>
   );
 }
 
