@@ -1,7 +1,7 @@
-import React, { useReducer, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useReducer, useRef, useMemo, useCallback } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
-import Counter from './Counter';
+import useInputs from './hooks/useInputs';
 
 function countActiveUsers(users) {
   console.log("활성 사용자 수를 세는 중....");
@@ -37,14 +37,6 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'CHANGE_INPUT':
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.name]: action.value
-        }
-      };
     case 'CREATE_USER':
       return {
         inputs: initialState.inputs,    // 다시 공백으로 만듬
@@ -68,20 +60,14 @@ function reducer(state, action) {
 }
 
 function App() {
+  const [{ username, email }, onChange, reset] = useInputs({
+    username: '',
+    email: ''
+  });
   const [state, dispatch] = useReducer(reducer, initialState);
   const nextId = useRef(4);
 
   const { users } = state;
-  const { username, email } = state.inputs; 
-
-  const onChange = useCallback(e => {
-    const { name, value } = e.target;
-    dispatch({
-      type: 'CHANGE_INPUT',
-      name,
-      value
-    });
-  }, []);
 
   const onCreate = useCallback(() => {
     dispatch({
@@ -92,8 +78,9 @@ function App() {
         email
       }
     });
+    reset();
     nextId.current += 1;
-  }, [username, email]);
+  }, [username, email, reset]);
 
   const onToggle = useCallback(id => {
     dispatch({
